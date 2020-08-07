@@ -1,0 +1,11 @@
+#!/media/elos/c9136174-4911-4f18-b2b9-d4bc29cd8caa/Project/ContactTracing/env/bin/python3.7
+
+# -*- coding: utf-8 -*-
+import re
+import sys
+
+from quart.cli import main
+
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.exit(main())
