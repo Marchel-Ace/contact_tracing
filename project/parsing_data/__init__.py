@@ -39,9 +39,10 @@ async def group_by_idx(seqs,idx=0,merge=True):
         d.update({k:v})
     return d
 
-async def post_data(list_data, thingsapi):
+async def post_data(list_data, thingsapi, deviceName):
     for key in list_data:
         msg = {
+        'device_name':deviceName,
         'unique_id':key,
         'contact_time':0,
         'average_range': rssi_to_meter(int(list_data[key][0][1]))

@@ -72,8 +72,8 @@ async def post_device():
     if 'devices' in json_data:
         list_data = await seperate_data(json_data['devices'])
         list_data = await group_by_idx(list_data, 0, False)
-        print(list_data)
-        await post_data(list_data, ThingsBoardAPI)    
+        deviceName = json_data['deviceName']
+        await post_data(list_data, ThingsBoardAPI, deviceName)    
     else:
         return jsonify({'ok':"ok"}) 
     return jsonify({'ok':"ok"}) 

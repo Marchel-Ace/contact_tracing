@@ -71,3 +71,4 @@ for key in data:
                 msg['contact_time'] = 0
                 msg['average_range'] = meter
     print(msg)
+
