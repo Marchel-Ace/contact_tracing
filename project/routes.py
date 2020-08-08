@@ -14,6 +14,7 @@ main = Blueprint('main', __name__)
 
 data = []
 last_post_data = []
+after_process = None
 @main.route('/search', methods=['POST'])
 async def search_db():
     msg = {
@@ -66,7 +67,7 @@ async def update_contact():
     
 @main.route('/postdevice', methods=['POST'])
 async def post_device():
-    global data, last_post_data
+    global data, last_post_data, after_process
     json_data = await request.get_json()
     if not json_data:
         abort(404)
@@ -74,7 +75,7 @@ async def post_device():
         list_data = await seperate_data(json_data['devices'])
         list_data = await group_by_idx(list_data, 0, False)
         deviceName = json_data['deviceName']
-        await post_data(list_data, ThingsBoardAPI, deviceName)
+        after_process = await post_data(list_data, ThingsBoardAPI, deviceName)
         data = datetime.datetime.now()
         last_post_data = list_data
     else:
@@ -84,8 +85,9 @@ async def post_device():
 
 @main.route('/getdevice', methods=['GET'])
 async def get_device():
-    global data, last_post_data
+    global data, last_post_data, after_process
     return jsonify({
         'last_post_timestamp': data,
-        'last_post_data':last_post_data
+        'last_post_fist_process':last_post_data,
+        'last_post_second_process':after_process
         })

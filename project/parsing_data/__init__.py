@@ -40,6 +40,7 @@ async def group_by_idx(seqs,idx=0,merge=True):
     return d
 
 async def post_data(list_data, thingsapi, deviceName):
+    after_processing = {}
     for key in list_data:
         msg = {
         'device_name':deviceName,
@@ -49,11 +50,13 @@ async def post_data(list_data, thingsapi, deviceName):
         }
         count_meter = 1
         len_value = 0
+        after_processing[key] = []
         for timestamp, rssi in list_data[key]:
             meter = rssi_to_meter(int(rssi))
             if len_value != len(list_data[key])-1:
                 next_timestamp = list_data[key][len_value+1][0]
                 if next_timestamp - timestamp > 40:
+                    after_processing[key].append(msg) 
                     thingsapi.send_telemetry(msg)
                     msg['contact_time'] = 0
                     msg['average_range'] = meter
@@ -69,5 +72,7 @@ async def post_data(list_data, thingsapi, deviceName):
                 else:
                     msg['contact_time'] = 0
                     msg['average_range'] = meter
+        after_processing[key].append(msg) 
         thingsapi.send_telemetry(msg)
+    return after_processing
         
