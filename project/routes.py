@@ -3,6 +3,7 @@ from .database.models import Device
 import asyncio
 from .thingsAPI import ThingsBoardAPI
 from .parsing_data import group_by_idx, rssi_to_meter, post_data, seperate_data
+import datetime
 thingUSER = 'tenant@thingsboard.org'
 thingPASS = 'tenant'
 thingURL = 'http://192.168.0.2:8080'
@@ -67,13 +68,15 @@ async def update_contact():
 async def post_device():
     global data
     json_data = await request.get_json()
+    user_agent = await request.headers.get('User-Agent')
     if not json_data:
         abort(404)
     if 'devices' in json_data:
         list_data = await seperate_data(json_data['devices'])
         list_data = await group_by_idx(list_data, 0, False)
         deviceName = json_data['deviceName']
-        await post_data(list_data, ThingsBoardAPI, deviceName)    
+        await post_data(list_data, ThingsBoardAPI, deviceName)
+        data = datetime.datetime.now()
     else:
         return jsonify({'ok':"ok"}) 
     return jsonify({'ok':"ok"}) 
@@ -82,4 +85,4 @@ async def post_device():
 @main.route('/getdevice', methods=['GET'])
 async def get_device():
     global data
-    return jsonify(data)
+    return jsonify({'last_post': data})
